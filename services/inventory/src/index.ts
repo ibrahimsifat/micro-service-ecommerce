@@ -29,6 +29,6 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 4002;
 
-const serviceName = process.env.SERVICE_NAME || "Inventory-service";
+const serviceName = process.env.SERVICE_NAME || "Inventory-Service";
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
