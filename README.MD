@@ -1,1 +1,5 @@
-# E-commerce microservice
+# E-commerce Microservice
+
+## ER Diagram
+
+![ER Diagram](./public/er-diagram.PNG)
