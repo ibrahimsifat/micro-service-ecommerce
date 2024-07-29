@@ -2,7 +2,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import morgan from "morgan";
-import { createProduct, getProductDetails } from "./controller";
+import { createProduct, getProductDetails, getProducts } from "./controller";
 
 dotenv.config();
 
@@ -17,7 +17,7 @@ app.get("/health", (req, res) => {
 
 // routes
 app.get("/products/:id", getProductDetails);
-app.get("/products/:id", getProductDetails);
+app.get("/products", getProducts);
 app.post("/products", createProduct);
 
 //  404 handler
@@ -33,7 +33,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: "Internal Server Error" });
 });
 
-const PORT = process.env.PORT || 4001;
+const PORT = process.env.PORT || 4002;
 
 const serviceName = process.env.SERVICE_NAME || "Product-Service";
 
