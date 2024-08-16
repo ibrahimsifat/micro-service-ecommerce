@@ -33,9 +33,17 @@ app.get("/health", (req, res) => {
 });
 // configure route
 configureRoutes(app);
-// app.get("/api/products", (req, res) => {
-//   res.json({ message: "API GateWay UP" });
-// });
+
+// 404 error handler
+app.use((req, res) => {
+  res.status(404).json({ message: "Not Found" });
+});
+
+// error handler
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: "Internal Server Error" });
+});
 
 // TODO: Auth Middleware
 

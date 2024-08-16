@@ -15,11 +15,14 @@ export const createHandler = (
         Object.keys(req.params).forEach((param) => {
           url = url.replace(`:${param}`, req.params[param]);
         });
-      console.log(url);
       const { data } = await axios({
         method,
         url,
         data: req.body,
+        headers: {
+          ...req.headers,
+          origin: "http://localhost:8081",
+        },
       });
       res.json(data);
     } catch (error) {

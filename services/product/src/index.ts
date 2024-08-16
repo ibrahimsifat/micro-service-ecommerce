@@ -15,13 +15,24 @@ app.get("/health", (req, res) => {
   res.status(200).json({ status: "UP" });
 });
 
+app.use((req, res, next) => {
+  const allowedOrigins = ["http://localhost:8081", "http://172.17.0.1:8081"];
+  const origin = req.headers.origin;
+
+  if (origin && allowedOrigins.includes(origin)) {
+    res.header("Access-Control-Allow-Origin", origin);
+    next();
+  } else {
+    res.status(403).json({ message: "Forbidden" });
+  }
+});
+
 // routes
 app.get("/products/:id", getProductDetails);
 app.get("/products", getProducts);
 app.post("/products", createProduct);
 
 //  404 handler
-
 app.use((req, res) => {
   res.status(404).json({ message: "Not Found" });
 });
