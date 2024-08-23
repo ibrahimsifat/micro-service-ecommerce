@@ -17,10 +17,9 @@ const verifyToken = async (req: Request, res: Response, next: NextFunction) => {
       accessToken,
       (process.env.JWT_SECRET as string) || "my_secret_key"
     );
-
     const user = await prisma.user.findUnique({
       where: {
-        id: (decoded as any).id,
+        id: (decoded as any).userId,
       },
       select: {
         id: true,

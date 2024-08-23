@@ -17,7 +17,7 @@ app.get("/health", (req, res) => {
 });
 
 app.get("/users/:id", getUserById);
-app.post("users", createUser);
+app.post("/users", createUser);
 // app.use((req, res, next) => {
 //   const allowedOrigins = ["http://localhost:8081", "http://172.17.0.1:8081"];
 //   const origin = req.headers.origin;

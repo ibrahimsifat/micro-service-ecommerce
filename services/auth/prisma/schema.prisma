@@ -71,6 +71,7 @@ enum VerificationCodeType {
 
 model VerificationCode {
   id         String               @id @default(cuid())
+  code       String
   userId     String
   user       User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
   status     VerificationStatus   @default(PENDING)
