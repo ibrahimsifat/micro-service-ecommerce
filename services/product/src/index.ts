@@ -44,7 +44,7 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: "Internal Server Error" });
 });
 
-const PORT = process.env.PORT || 4002;
+const PORT = process.env.PORT || 4001;
 
 const serviceName = process.env.SERVICE_NAME || "Product-Service";
 
