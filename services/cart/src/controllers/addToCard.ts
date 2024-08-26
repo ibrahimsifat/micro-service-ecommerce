@@ -45,6 +45,9 @@ const addToCard = async (req: Request, res: Response, next: NextFunction) => {
       return res.status(400).json({ message: "Inventory not available" });
     }
 
+    // TODO: check if the product is already exist in the cart
+    // Logic: parsedBody.data.quantity - existingQuantity
+
     // add the item to the cart
     await redis.hset(
       `cart:${cartSessionId}`,
