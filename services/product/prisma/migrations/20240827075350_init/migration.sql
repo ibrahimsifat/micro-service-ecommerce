@@ -8,7 +8,7 @@ CREATE TABLE "Product" (
     "name" TEXT NOT NULL,
     "description" TEXT,
     "price" DOUBLE PRECISION NOT NULL DEFAULT 0,
-    "inventory" TEXT,
+    "inventoryId" TEXT,
     "status" "Status" NOT NULL DEFAULT 'DRAFT',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,

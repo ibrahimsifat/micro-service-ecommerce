@@ -2,12 +2,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import morgan from "morgan";
-import {
-  createInventory,
-  getInventoryById,
-  getInventoryDetails,
-  updateInventory,
-} from "./controller";
+import { checkout, getOrderById, getOrders } from "./controller";
 
 dotenv.config();
 
@@ -34,11 +29,11 @@ app.get("/health", (req, res) => {
 // });
 
 // routes
-app.get("/inventories/:id/details", getInventoryDetails);
-app.get("/inventories/:id", getInventoryById);
-app.put("/inventories/:id", updateInventory);
-app.post("/inventories", createInventory);
+app.get("/orders/:id", getOrderById);
+app.post("/orders/checkout", checkout);
+app.get("/orders", getOrders);
 
+//
 //  404 handler
 
 app.use((req, res) => {
@@ -52,8 +47,8 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: "Internal Server Error" });
 });
 
-const PORT = process.env.PORT || 4002;
+const PORT = process.env.PORT || 4007;
 
-const serviceName = process.env.SERVICE_NAME || "Inventory-Service";
+const serviceName = process.env.SERVICE_NAME || "Order-Service";
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
