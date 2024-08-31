@@ -5,7 +5,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 import { addToCard, clearCart, getMyCart } from "./controllers";
 import "./events/onKeyExpires";
-
+import "./receiver";
 dotenv.config;
 
 const app = express();

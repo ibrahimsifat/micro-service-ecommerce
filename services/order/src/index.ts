@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import express from "express";
 import morgan from "morgan";
 import { checkout, getOrderById, getOrders } from "./controller";
-
+import "./queue";
 dotenv.config();
 
 const app = express();

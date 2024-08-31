@@ -6,8 +6,9 @@
 // invoke email service
 // invoke cart service
 
-import { CART_SERVICE, EMAIL_SERVICE, PRODUCT_SERVICE } from "@/config";
+import { CART_SERVICE, PRODUCT_SERVICE } from "@/config";
 import prisma from "@/prisma";
+import sendToQueue from "@/queue";
 import axios from "axios";
 import { NextFunction, Request, Response } from "express";
 import { z } from "zod";
@@ -75,20 +76,28 @@ const checkout = async (req: Request, res: Response, next: NextFunction) => {
       },
     });
 
+    console.log("Order created", order.id);
     // clear cart
-    await axios.get(`${CART_SERVICE}/cart/clear`, {
-      headers: {
-        "x-session-id": parsedBody.data.cartSessionId,
-      },
-    });
+    // await axios.get(`${CART_SERVICE}/cart/clear`, {
+    //   headers: {
+    //     "x-session-id": parsedBody.data.cartSessionId,
+    //   },
+    // });
 
     // send Email
-    await axios.post(`${EMAIL_SERVICE}/emails/send`, {
-      recipient: parsedBody.data.userEmail,
-      subject: "Order Confirmation",
-      body: `Thank you for your order! Your Order Id is ${order.id}. Your order total is $${grandTotal}.`,
-      source: "Checkout",
-    });
+    // await axios.post(`${EMAIL_SERVICE}/emails/send`, {
+    //   recipient: parsedBody.data.userEmail,
+    //   subject: "Order Confirmation",
+    //   body: `Thank you for your order! Your Order Id is ${order.id}. Your order total is $${grandTotal}.`,
+    //   source: "Checkout",
+    // });
+
+    // send to queue
+    sendToQueue("send-email", JSON.stringify(order));
+    sendToQueue(
+      "clear-cart",
+      JSON.stringify({ cartSessionId: parsedBody.data.cartSessionId })
+    );
 
     res.status(201).json(order);
   } catch (error) {

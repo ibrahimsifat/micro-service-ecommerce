@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import express from "express";
 import morgan from "morgan";
 import { getEmails, sendEmail } from "./controller";
-
+import "./receiver";
 dotenv.config();
 
 const app = express();
