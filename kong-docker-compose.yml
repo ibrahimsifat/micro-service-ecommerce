@@ -50,11 +50,13 @@ services:
   # Kong: The API Gateway
   #######################################
   kong:
-    image: kong:latest
+    build:
+      context: ./config
+      dockerfile: Dockerfile
     container_name: kong
     restart: on-failure
     networks:
-      kong-net: {}
+      - kong-net
     environment:
       KONG_DATABASE: postgres
       KONG_PG_HOST: kong-database
@@ -65,9 +67,9 @@ services:
       KONG_PROXY_LISTEN_SSL: 0.0.0.0:8443
       KONG_ADMIN_LISTEN: 0.0.0.0:8002, 0.0.0.0:8444 ssl
       KONG_PLUGINSERVER_NAME: js
-      KONG_PLUGINSERVER_JS_SOCKET: /usr/local/kong/js_plugniserver.sock
-      KONG_PLUGINSERVER_JS_START_CMD: /usr/local/bin/kong-js-plugniserver -v --plugin-directory /usr/local/kong/js_plugns
-      KONG_PLUGINSERVER_JS_QUERY_CMD: /usr/local/bin/kong-js-plugniserver --plugin-directory /usr/local/kong/js_plugns --dump-all-plugins
+      KONG_PLUGINSERVER_JS_SOCKET: /usr/local/kong/js_pluginserver.sock
+      KONG_PLUGINSERVER_JS_START_CMD: /usr/local/bin/kong-js-pluginserver -v --plugins-directory /usr/local/kong/js-plugins
+      KONG_PLUGINSERVER_JS_QUERY_CMD: /usr/local/bin/kong-js-pluginserver --plugin-directory /usr/local/kong/js_plugins --dump-all-plugins
     depends_on:
       - kong-database
       - kong-migration
