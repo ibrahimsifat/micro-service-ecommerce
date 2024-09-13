@@ -8,6 +8,10 @@
     "start": "node customauthplugin.js"
   },
   "dependencies": {
-    "axios": "^1.7.6"
+    "axios": "^1.7.6",
+    "cookie": "0.5.0",
+    "js-yaml": "^4.1.0",
+    "jsonwebtoken": "8.5.1",
+    "qs": "^6.11.2"
   }
 }

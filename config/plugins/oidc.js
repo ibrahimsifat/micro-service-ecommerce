@@ -1,80 +1,99 @@
 const axios = require("axios");
-
-class CustomAuth {
+const qs = require("qs");
+class Oidc {
   constructor(config) {
     this.config = config;
   }
 
   async access(kong) {
     try {
-      kong.log.notice(` Hello Custom Auth`);
       const headers = await kong.request.get_headers();
-      kong.log.notice(`header Response:${headers}`);
-      const token_place = this.config.token_place || "Authorization";
-      const authHeader =
-        headers[token_place?.toLowerCase()] &&
-        headers[token_place?.toLowerCase()][0];
-      const token = authHeader ? authHeader.split(" ")[1] : null;
+      const authHeader = headers["authorization"];
+      const token = authHeader ? authHeader[0].split(" ")[1].trim() : "";
 
-      kong.log.notice(`token Response:${token}`);
+      const keycloak_introspection_url = this.config.keycloak_introspection_url;
+      const client_id = this.config.client_id;
+      const client_secret = this.config.client_secret;
+
+      kong.log.notice(`
+      🍳🍳🍳🍳🍳🍳🍳
+      token = ${token.length}
+      keycloak_introspection_url = ${keycloak_introspection_url}
+      client_id = ${client_id}
+      client_secret = ${client_secret}  
+      `);
 
       if (!token) {
         return await kong.response.exit(
           401,
           JSON.stringify({
-            message: "Unauthorized",
+            message: "Unauthorized. No Token Found!",
           })
         );
       }
 
-      const data = await axios.post(this.config.validation_endpoint, {
-        accessToken: token, //example:http://localhost:8003/auth/verify-token
+      const data = qs.stringify({
+        client_id,
+        client_secret,
+        token,
       });
 
-      if (data.status !== 200) {
+      const response = await axios.post(keycloak_introspection_url, data, {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+      });
+
+      kong.log.notice(
+        `🚆🚆🚆🚆🚆🚆 Kong Introspection API Response: ${JSON.stringify(
+          response.data
+        )}`
+      );
+
+      if (!response.data.active) {
         return await kong.response.exit(
           401,
           JSON.stringify({
-            message: "Unauthorized",
+            message: "Unauthorized. Invalid Token!",
           })
         );
       }
 
-      kong.log.notice(`Auth API response:${JSON.stringify(data.data)}`);
+      kong.log.notice(`🥰🥰 Request sent to the Upstream server`);
 
-      // set user data in headers
-      kong.service.request.set_header("X-user-ID", data.data.user.id);
-      kong.service.request.set_header("X-user-Email", data.data.user.email);
+      // Set user data in headers
+      kong.service.request.set_header("X-User-ID", response.data.sid);
+      kong.service.request.set_header("X-User-Email", response.data.email);
 
       return;
     } catch (error) {
-      const message = error.message || "Unauthorized";
-      return await kong.response.exit(
-        500,
-        JSON.stringify({
-          message,
-        })
-      );
+      const message = error.message || "Something Went Wrong!";
+      return await kong.response.exit(500, JSON.stringify({ message }));
     }
   }
 }
 
 module.exports = {
-  Plugin: CustomAuth,
+  Plugin: Oidc,
   Schema: [
     {
-      validation_endpoint: {
+      keycloak_introspection_url: {
         type: "string",
         required: true,
         description:
-          "The URL of the external authentication service's validation endpoint",
+          "The URL of the external authentication server's validation endpoint.",
       },
     },
     {
-      token_place: {
+      client_id: {
         type: "string",
-        required: false,
-        default: "Authorization ",
+        required: true,
+      },
+    },
+    {
+      client_secret: {
+        type: "string",
+        required: true,
       },
     },
   ],
